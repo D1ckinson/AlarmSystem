@@ -7,9 +7,8 @@ public class Siren : MonoBehaviour
 
     private float _maxVolume = 100;
     private float _volumeUpStep = 0.01f;
-    private float _delay = 0.2f;
-
     private bool _isPlaying;
+    private WaitForSeconds _sleepTime = new(0.2f);
 
     private void Start() =>
         _audioSource.volume = 0;
@@ -30,8 +29,6 @@ public class Siren : MonoBehaviour
 
     private IEnumerator PlayAlarm()
     {
-        WaitForSeconds wait = new(_delay);
-
         _audioSource.Play();
 
         while (_isPlaying)
@@ -41,19 +38,17 @@ public class Siren : MonoBehaviour
                 _audioSource.volume += _volumeUpStep;
             }
 
-            yield return wait;
+            yield return _sleepTime;
         }
     }
 
     private IEnumerator StopAlarm()
     {
-        WaitForSeconds wait = new(_delay);
-
         while (_audioSource.volume > 0)
         {
             _audioSource.volume -= _volumeUpStep;
 
-            yield return wait;
+            yield return _sleepTime;
         }
 
         _audioSource.Stop();
