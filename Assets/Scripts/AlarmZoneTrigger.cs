@@ -6,13 +6,13 @@ public class AlarmZoneTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Thief>())
-            _siren.Play();
+        if (other.TryGetComponent(out Thief _))
+            _siren.GetAlarmStatus(true);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<Thief>())
-            _siren.Stop();
+        if (other.TryGetComponent(out Thief _))
+            _siren.GetAlarmStatus(false);
     }
 }
