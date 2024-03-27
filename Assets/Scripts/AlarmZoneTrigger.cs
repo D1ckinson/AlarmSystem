@@ -7,12 +7,12 @@ public class AlarmZoneTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Thief _))
-            _siren.GetAlarmStatus(true);
+            _siren.FadeIn();
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.TryGetComponent(out Thief _))
-            _siren.GetAlarmStatus(false);
+            _siren.FadeOut();
     }
 }

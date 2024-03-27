@@ -5,54 +5,44 @@ public class Siren : MonoBehaviour
 {
     [SerializeField] private AudioSource _audioSource;
 
-    private float _maxVolume = 100;
-    private float _volumeUpStep = 0.01f;
-    private float _sleepTime = 0.2f;
-    private bool _isPlaying;
+    private Coroutine _coroutine;
 
-    private void Start()
-    {
+    private float _minVolume = 0;
+    private float _maxVolume = 100;
+    private float _volumeDelta = 0.1f;
+
+    private void Start() =>
         _audioSource.volume = 0;
 
-        StartCoroutine(Play());
+    public void FadeIn()
+    {
+        if (_coroutine != null)
+            StopCoroutine(_coroutine);
+
+        _coroutine = StartCoroutine(ChangeVolume(_maxVolume));
     }
 
-    public void GetAlarmStatus(bool satus) =>
-        _isPlaying = satus;
-
-    private IEnumerator Play()
+    public void FadeOut()
     {
-        WaitForSeconds wait = new(_sleepTime);
+        if (_coroutine != null)
+            StopCoroutine(_coroutine);
 
-        while (true)
+        _coroutine = StartCoroutine(ChangeVolume(_minVolume));
+    }
+
+    private IEnumerator ChangeVolume(float target)
+    {
+        if (_audioSource.isPlaying == false)
+            _audioSource.Play();
+
+        while (_audioSource.volume != target)
         {
-            if (_isPlaying)
-            {
-                if (_audioSource.isPlaying == false)
-                {
-                    _audioSource.Play();
-                }
-
-                if (_audioSource.volume < _maxVolume)
-                {
-                    _audioSource.volume += _volumeUpStep;
-                }
-
-                yield return wait;
-            }
-            else if (_audioSource.volume > 0)
-            {
-                _audioSource.volume -= _volumeUpStep;
-
-                yield return wait;
-            }
-
-            if (_audioSource.volume <= 0 && _audioSource.isPlaying)
-            {
-                _audioSource.Stop();
-            }
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, target, _volumeDelta * Time.deltaTime);
 
             yield return null;
         }
+
+        if (_audioSource.volume == _minVolume)
+            _audioSource.Stop();
     }
 }
