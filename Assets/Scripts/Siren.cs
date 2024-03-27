@@ -17,6 +17,7 @@ public class Siren : MonoBehaviour
     {
         _isPlaying = true;
 
+        StopCoroutine(StopAlarm());
         StartCoroutine(PlayAlarm());
     }
 
@@ -24,6 +25,7 @@ public class Siren : MonoBehaviour
     {
         _isPlaying = false;
 
+        StopCoroutine(PlayAlarm());
         StartCoroutine(StopAlarm());
     }
 
